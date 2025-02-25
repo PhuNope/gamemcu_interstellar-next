@@ -1,0 +1,57 @@
+#define PI               3.14159265359
+#define PI2              6.28318530718
+#define PI1_2            1.5707963267949
+#define RECIPROCAL_PI    0.31830988618
+#define RECIPROCAL_PI2   0.15915494
+#define RECIPROCAL_PI1_2 0.636619772367
+#define LOG2E            1.442695
+#define LOG4E            0.721347
+#define EPSILON           1e-6
+#define EPSILON_LOWP      1e-4
+#define INFINITY         1000000.0
+
+#define saturate(a) clamp(a, 0.0, 1.0)
+#define saturateDot(a, b) saturate(dot(a, b))
+#define whiteCompliment(a)(1.0 - saturate(a))
+
+#define MEDIUMP_FLT_MAX    65504.0
+#define saturateMediump(x) min(x, MEDIUMP_FLT_MAX)
+
+// Microfacet Models for Refraction through Rough Surfaces - equation (33)
+// http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
+// alpha is "roughness squared" in Disney’s reparameterization
+float D_GGX(float alpha, float dotNH) {
+  // float a2 = pow2(alpha);
+  // float denom = (pow2(dotNH) * (a2 - 1.0) + 1.0; // avoid alpha = 0 with dotNH = 1
+  // return RECIPROCAL_PI * a2 / pow2(denom);
+
+  // NOTE: (aa-1) == (a-1)(a+1) produces better fp accuracy
+  float a = alpha;
+  float f = (a - 1.0) * ((a + 1.0) * (dotNH * dotNH)) + 1.0;
+  return (a * a) / (PI * f * f);
+}
+
+vec3 F_Schlick(vec3 F0, vec3 F90, float dotVH) {
+  return mix(F0, F90, exp2((-5.55473 * dotVH - 6.98316) * dotVH));//F0 + (1.0 - F0) * pow(1.0 - dotVH, 5.0)
+}
+
+vec3 F_SchlickRoughness(vec3 F0, float roughness, float dotNV) {
+  vec3 Fr = max(vec3(1.0 - roughness), F0) - F0;
+  return F0 + Fr * exp2((-5.55473 * dotNV - 6.98316) * dotNV);//F0 + Fr * pow(1.0 - dotNV, 5.0);
+}
+
+float V_SmithGGXCorrelated_Fast(float roughness, float NoL, float NoV) {
+  float v = 0.5 / mix(2.0 * NoL * NoV, NoL + NoV, roughness);
+  return saturateMediump(v);
+}
+
+float BRDF_Specular_GGX(float roughness, float dotNL, float dotNV, float dotNH) {
+  float a = roughness * roughness;
+  float V = V_SmithGGXCorrelated_Fast(a, dotNL, dotNV);
+  float D = D_GGX(a, dotNH);
+  return V * D;
+}
+
+vec3 BRDF_Diffuse_Lambertian(vec3 c_diffuse) {
+  return c_diffuse * RECIPROCAL_PI;
+}

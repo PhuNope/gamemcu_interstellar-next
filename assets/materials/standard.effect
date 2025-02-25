@@ -1,0 +1,87 @@
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: standard-vs:vert
+      frag: standard-fs:frag
+      properties: &p1
+        mainTexture:            { value: white }
+        mainTexture_ST:         { value: [1, 1, 0, 0] }
+        mainColor:              { value: [1, 1, 1, 1], editor: { displayName: Albedo, type: color } }
+        albedoScale:            { value: [1, 1, 1], target: albedoScaleAndCutoff.xyz }
+        roughness:              { value: 1, target: inputParams.x, editor: { slide: true, range: [0, 1.0], step: 0.01 } }
+        metallic:               { value: 0, target: inputParams.y, editor: { slide: true, range: [0, 1.0], step: 0.01 } }
+        occlusion:              { value: 1, target: inputParams.z, editor: { slide: true, range: [0, 1.0], step: 0.01, parent: USE_OCCLUSION_MAP } }
+        occlusionMap:           { value: white, editor: { parent: USE_OCCLUSION_MAP } }
+        occlusionMap2:          { value: white, editor: { parent: USE_OCCLUSION_MAP2 } }
+        emissiveMap :           { value: black, editor: { parent: USE_EMISSIVE_MAP } }
+        emissive:               { value: 1, target: albedoScaleAndCutoff.w, editor: { parent: USE_EMISSIVE_MAP } }
+        emissiveColor:          { value: [0, 0, 0, 1], editor: { type: color } }
+        pbrMap :                { value: black, editor: { parent: USE_PBR_MAP } }
+        pbrMap_ST:              { value: [1, 1, 0, 0], editor: { parent: USE_PBR_MAP } }
+        normalMap:              { value: black, editor: { parent: USE_NORMAL_MAP } }
+        normalMap_ST:           { value: [1, 1, 0, 0], editor: { parent: USE_NORMAL_MAP } }
+        normalScale:            { value: 1, target: inputParams.w, editor: { parent: USE_NORMAL_MAP, slide: true, range: [0, 3], step: 0.01 } }
+        lightmap:               { value: black }
+        indirectmap:            { value: black }
+        indirectIntensity:      { value: 1, target: inputParams2.x, editor: { parent: USE_INDIRECTMAP, slide: true, range: [0, 1.0], step: 0.01 } }
+  - name: transparent
+    passes:
+    - vert: standard-vs:vert
+      frag: standard-fs:frag
+      embeddedMacros: { CC_FORCE_FORWARD_SHADING: true }
+      depthStencilState: &d1
+        depthTest: true
+        depthWrite: false
+      blendState: &b1
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *p1
+  - name: particle
+    passes:
+    - vert: standard-vs:vert
+      frag: standard-fs:frag
+      embeddedMacros: { USE_PARTICLE: true }   
+      properties: &p2
+        <<: *p1
+        noiseMap:               { value: black }
+        progress:               { value: 0, target: inputParams2.w, editor: { slide: true, range: [0, 2.0], step: 0.01 } }
+  - name: particle2
+    passes:
+    - vert: standard-vs:vert
+      frag: standard-fs:frag
+      embeddedMacros: { USE_PARTICLE2: true }   
+      properties: *p2
+  - name: sweeplight
+    passes:
+    - vert: standard-vs:vert
+      frag: standard-fs:frag
+      embeddedMacros: { USE_PARTICLE: true, USE_SWEEP_LIGHT: true }   
+      properties: 
+        <<: *p2
+        sweepThreshold:               { value: [0], target: inputParams2.y, editor: { slide: true, range: [0, 1.0], step: 0.01 } }
+        sweepIntensity:               { value: [0], target: inputParams2.z, editor: { slide: true, range: [0, 1.0], step: 0.01 } }
+}%
+
+CCProgram standard-vs %{
+  precision highp float;
+  #include <chunks/standard-input>
+
+  vec4 vert() {   
+    return getStandardInput();
+  }
+}%       
+
+CCProgram standard-fs %{
+  precision highp float;
+  #include <chunks/standard-output>
+
+  vec4 frag() {
+    MaterialInfo materialInfo = getMaterialInfo();
+    return getStandardOutput(materialInfo);
+  }
+}%

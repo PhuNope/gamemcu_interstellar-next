@@ -1,0 +1,16 @@
+#if USE_DITHER_DISCARD
+
+// const float[16] patterns = float[](0.,8.,2.,10.,12.,4.,14.,6.,3.,11.,1.,9.,15.,7.,13.,5.);
+
+void ditherDiscard(in float near, in float far, in float z) {
+    float d = smoothstep(near, far, z);
+    if (d < 1.0){
+        int x = int(mod(gl_FragCoord.x, 4.0));
+        int y = int(mod(gl_FragCoord.y, 4.0));
+        // float dither = patterns[(x * 4) + y] / 16.;
+         float dither = float((x * 4) + y) / 16.;
+        if (d <= dither) discard;
+    }
+}
+
+#endif

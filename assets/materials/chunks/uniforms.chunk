@@ -1,0 +1,10 @@
+uniform StandardConstants {
+  vec4 mainColor;
+  vec4 emissiveColor;
+  vec4 albedoScaleAndCutoff;
+  vec4 inputParams;
+  vec4 inputParams2;
+  vec4 mainTexture_ST;
+  vec4 normalMap_ST;
+  vec4 pbrMap_ST;
+};

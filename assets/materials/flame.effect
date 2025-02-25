@@ -1,0 +1,133 @@
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: flame-vs:vert
+      frag: flame-fs:frag
+      properties: &props
+        mainColorIn:            { value: [1, 1, 1, 1], editor: { type: color } }
+        mainColorOut:           { value: [1, 1, 1, 1], editor: { type: color } }
+        colorStep:              { value: [0.1,0.4], target: mainColorParams.xy}
+        colorExp:               { value: 1, target: mainColorParams.z}
+        lightNoiseTiling:       { value: [1,1], target: lightNoiseParams.xy }
+        lightNoiseFlow:         { value: 1, target: lightNoiseParams.z }
+        lightNoiseExp:          { value: 1, target: lightNoiseParams.w}
+        lightNoiseStep:         { value: [0.5,0.9], target: lightNoiseParams2.xy}
+        coreLightStep:          { value: [0.1,0.4], target: coreLightParams.xy}
+        coreLightExp:           { value: 1, target: coreLightParams.z}
+        fresnelPower:           { value: 1, target: lightNoiseParams2.z}
+        fresnelExp:             { value: 1, target: lightNoiseParams2.w}
+        intensity:              { value: 1, target: coreLightParams.w, editor: { slide: true, range: [0, 1.0], step: 0.01 } }
+  - name: transparent
+    passes:
+    - vert: flame-vs:vert
+      frag: flame-fs:frag
+      depthStencilState:
+        depthTest: true
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *props
+}%
+
+CCProgram flame-vs %{
+  precision highp float;
+  #include <legacy/decode-standard>
+  #include <builtin/uniforms/cc-global>
+  #include <builtin/functionalities/world-transform>
+  #include <chunks/noise>
+
+  out vec2 v_uv;
+  out vec3 v_view;
+  
+  out vec3 v_normal;
+  out vec3 v_tangent;
+  out vec3 v_bitangent;
+
+  vec4 vert() {
+    StandardVertInput In;
+    CCDecode(In);
+
+    mat4 matWorld, matWorldIT;
+    CCGetWorldMatrixFull(matWorld, matWorldIT);
+
+    v_uv = a_texCoord;
+
+    float offset = noise2d(v_uv * vec2(5.0, 10.0) - 16.0 * cc_time.x) * 0.00125;
+    In.position.xyz += In.normal * offset;
+    In.position.x += v_uv.x * (noise2d(v_uv - 16.0 * cc_time.x) * 0.5 + 0.5) * 0.025;
+
+    vec4 worldPos = matWorld * In.position;
+    v_view = cc_cameraPos.xyz - worldPos.xyz;
+    v_normal = normalize((matWorldIT * vec4(In.normal, 0.0)).xyz);
+
+    return cc_matViewProj * worldPos;
+  }
+}%
+
+CCProgram flame-fs %{
+  precision highp float;
+  #include <builtin/uniforms/cc-global>
+  #include <chunks/noise>
+
+  in vec2 v_uv;
+  in vec3 v_view;
+  in vec3 v_normal;
+
+  uniform sampler2D mainTexture;
+
+  uniform Constant {
+    vec4 mainColorIn;
+    vec4 mainColorOut;
+    vec4 mainColorParams;
+    vec4 lightNoiseParams;
+    vec4 lightNoiseParams2;
+    vec4 coreLightParams;
+    vec4 controlParams;
+  };
+
+  #define saturate(a) clamp(a, 0.0, 1.0)
+  #define u_colorStep         mainColorParams.xy
+  #define u_colorExp          mainColorParams.z
+  #define u_lightNoiseTiling  lightNoiseParams.xy
+  #define u_lightNoiseFlow    lightNoiseParams.z
+  #define u_lightNoiseExp     lightNoiseParams.w
+  #define u_lightNoiseStep    lightNoiseParams2.xy
+  #define u_coreLightStep     coreLightParams.xy
+  #define u_coreLightExp      coreLightParams.z
+  #define u_fresnelPower      lightNoiseParams2.z
+  #define u_fresnelExp        lightNoiseParams2.w
+  #define u_intensity         coreLightParams.w
+
+
+  vec4 frag () {
+    vec4  color = mix(mainColorOut, mainColorIn, smoothstep(u_colorStep.y, u_colorStep.x, v_uv.x));
+    
+    float noise = noise2d(v_uv.xy * u_lightNoiseTiling - vec2(u_lightNoiseFlow * cc_time.x, 0.0)) * 0.5 + 0.5;;
+    noise *= smoothstep(u_lightNoiseStep.y, u_lightNoiseStep.x, v_uv.x);
+    noise = saturate(noise);
+
+    float core = smoothstep(u_coreLightStep.y, u_coreLightStep.x, v_uv.x);
+    core = saturate(core);
+
+    float alpha = saturate(noise + core);
+
+    vec3 f = vec3(-1.,0.,0.);
+    vec3 v = normalize(v_view);
+    vec3 n = normalize(v_normal);
+
+    float VoN = abs(dot(n, v));
+    alpha *= VoN;
+
+    //控制长度，fafa
+    alpha*=smoothstep(1.-u_intensity,1.,1.-v_uv.x);
+    color.rgb*=u_intensity;
+
+    return vec4(color.rgb * 3., alpha);
+  }
+}%

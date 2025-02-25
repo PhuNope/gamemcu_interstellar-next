@@ -1,0 +1,164 @@
+CCEffect %{
+  temporaries:
+    b1: &b1
+      targets:
+      - blend: true
+        blendSrc: src_alpha
+        blendDst: one
+        blendSrcAlpha: src_alpha
+        blendDstAlpha: one
+    b2: &b2
+      targets:
+      - blend: true
+        blendSrc: one
+        blendDst: one_minus_src_alpha
+        blendSrcAlpha: one
+        blendDstAlpha: one_minus_src_alpha
+    b3: &b3
+      targets:
+      - blend: true
+        blendSrc: src_alpha
+        blendDst: one_minus_src_alpha
+        blendDstAlpha: one_minus_src_alpha
+    d1: &d1 { depthTest: true, depthWrite: false }
+    r1: &r1 { cullMode: none }
+    p1: &p1
+      mainTexture:            { value: white }
+      mainTexture_ST:         { value: [1, 1, 0, 0] }
+      mainColor:              { value: [1, 1, 1, 1], editor: { displayName: Albedo, type: color } }
+      albedoScale:            { value: [1, 1, 1], target: albedoScaleAndCutoff.xyz }
+      size:                   { value: [1, 1], target: sizeRotation.xy }
+      rotation:               { value: [0], target: sizeRotation.z }
+  techniques:
+  - name: opaque
+    passes:
+    - vert: billboard-vs:vert
+      frag: billboard-fs:frag
+      properties: *p1
+  - name: transparent
+    passes:
+    - vert: billboard-vs:vert
+      frag: billboard-fs:frag
+      rasterizerState: *r1
+      depthStencilState: *d1
+      blendState: *b3
+      properties: *p1
+  - name: add
+    passes:
+    - vert: billboard-vs:vert
+      frag: billboard-fs:frag
+      rasterizerState: *r1
+      depthStencilState: *d1
+      blendState: *b1
+      properties: *p1  
+  - name: lensflare
+    passes:
+    - vert: billboard-vs:vert
+      frag: billboard-fs:lensflare
+      rasterizerState: *r1
+      depthStencilState: *d1
+      blendState: *b1
+      properties: 
+        <<: *p1
+        intensity:              { value: 1, target: sizeRotation.w, editor: { slide: true, range: [0, 1.0], step: 0.01 } }
+}%
+
+CCProgram billboard-vs %{
+  precision highp float;
+  #include <builtin/uniforms/cc-global>
+  #include <legacy/input>
+  #include <legacy/decode-base>
+  #include <legacy/local-batch>
+  #include <chunks/common>
+
+  #pragma define CC_RENDER_MODE RENDER_MODE_BILLBOARD
+
+  out vec2 v_uv;
+  out vec3 v_view;
+  out vec3 v_worldPos;
+
+  uniform Constants {
+    vec4 mainColor;
+    vec4 mainTexture_ST;
+    vec4 albedoScaleAndCutoff;
+    vec4 sizeRotation;
+  };
+
+  vec4 vert() {
+    vec4 position;
+    CCVertInput(position);
+
+    mat4 matWorld;
+    CCGetWorldMatrix(matWorld);
+
+    vec3 center = matWorld[3].xyz;
+    vec4 worldPos = vec4(center, 1.);
+    computeVertPos(worldPos, position.xy, quaternionFromEuler(vec3(0., 0., sizeRotation.z)), vec3(sizeRotation.xy, 0.), cc_matViewInv);
+    
+    v_worldPos = center;
+    v_view = cc_cameraPos.xyz - center;
+    v_uv = a_texCoord * mainTexture_ST.xy + mainTexture_ST.zw;
+
+    return cc_matViewProj * worldPos;
+  }
+}%
+
+
+CCProgram billboard-fs %{
+  precision highp float;
+  #include <chunks/fog>
+  #include <chunks/tonemap>
+
+  in vec3 v_view;
+  in vec3 v_worldPos;
+  in vec2 v_uv;
+  uniform sampler2D mainTexture;
+
+  uniform Constants {
+    vec4 mainColor;
+    vec4 mainTexture_ST;
+    vec4 albedoScaleAndCutoff;
+    vec4 sizeRotation;
+  };
+
+  vec4 shading() {
+    vec4 finalColor = mainColor;
+    finalColor.rgb *= albedoScaleAndCutoff.xyz;
+
+    vec4 pixel = texture(mainTexture, v_uv);
+    finalColor.rgb *= (pixel.rgb);
+    finalColor.a *= pixel.a;
+
+    return finalColor;
+  }
+  
+  vec4 frag () {
+    vec4 color = shading();
+    color.rgb = applyFog(color.rgb, v_view, v_worldPos);
+    return color;
+  }
+
+  vec4 addSmooth() {
+    vec4 color = shading();
+    color.rgb *= color.a;
+    color.rgb = applyFog(color.rgb, v_view, v_worldPos);
+    return color;
+  }
+
+  #define u_intensity sizeRotation.w
+
+  vec4 lensflare() {
+    vec3 f = vec3(-1.,0.,0.);
+    vec3 v = normalize(v_view);
+    float VoF = clamp(dot(v, f),0.,1.);
+
+    vec4 color = shading();
+    // float p = 1.-smoothstep(0., 0.5, 1.-VoF);
+    float p = smoothstep(0., 0.5, 1.-VoF);
+    color.a *= p;
+    color.rgb *= u_intensity;
+    color.rgb = pow(color.rgb,vec3(1.2+cos(cc_time.x*80.)/5.));
+
+    return color;
+  }
+}%

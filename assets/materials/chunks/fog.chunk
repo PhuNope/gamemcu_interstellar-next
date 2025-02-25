@@ -1,0 +1,9 @@
+#include <builtin/uniforms/cc-global>
+
+vec3 applyFog(in vec3 col, in vec3 rd, in vec3 p) {
+    float d = 0.15;
+    float t = max(0.,length(rd) - 5.);
+    float f2 = clamp(dot(normalize(rd), vec3(0.,1.,0.)),0.,1.);
+    vec3  fog1 = mix(col, cc_fogColor.rgb, 1.-exp(-t * d));
+    return mix(fog1, cc_fogColor.rgb * mix(1.,1.5,smoothstep(0.,0.5,f2)), 1.-smoothstep(-10.,-5.,p.y));
+}

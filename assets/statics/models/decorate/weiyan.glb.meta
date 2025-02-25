@@ -1,0 +1,85 @@
+{
+  "ver": "2.3.13",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "99f1fc10-a705-48e5-9dd0-085c6271bd1d",
+  "files": [],
+  "subMetas": {
+    "aeaac": {
+      "importer": "gltf-mesh",
+      "uuid": "99f1fc10-a705-48e5-9dd0-085c6271bd1d@aeaac",
+      "displayName": "",
+      "id": "aeaac",
+      "name": "Circle.002.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 1088
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "97c49": {
+      "importer": "gltf-scene",
+      "uuid": "99f1fc10-a705-48e5-9dd0-085c6271bd1d@97c49",
+      "displayName": "",
+      "id": "97c49",
+      "name": "weiyan.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "99f1fc10-a705-48e5-9dd0-085c6271bd1d@aeaac"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [
+        "aba49d28-cfa3-459f-a2da-36a21b10c6b9",
+        "b4b0fab4-5c22-4e06-b0a6-7821de31751b"
+      ],
+      "scenes": [
+        "99f1fc10-a705-48e5-9dd0-085c6271bd1d@97c49"
+      ]
+    },
+    "dumpMaterials": true,
+    "materialDumpDir": "db://assets/statics/models/decorate/Materials_weiyan",
+    "meshCompress": {
+      "enable": true,
+      "encode": true,
+      "compress": true
+    }
+  }
+}

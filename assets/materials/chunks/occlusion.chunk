@@ -1,0 +1,30 @@
+// Sphere occlusion
+float sphOcclusion( in vec3 pos, in vec3 nor, in vec4 sph )
+{
+    vec3  di = sph.xyz - pos;
+    float l  = length(di);
+    float nl = dot(nor,di/l);
+    float h  = l/sph.w;
+    float h2 = h*h;
+    float k2 = 1.0 - h2*nl*nl;
+
+    // above/below horizon
+    // EXACT: Quilez - https://iquilezles.org/articles/sphereao
+    float res = max(0.0,nl)/h2;
+    
+    // intersecting horizon 
+    if( k2 > 0.001 ) {
+        #if 1
+            // EXACT : Lagarde/de Rousiers - https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
+            res = nl*acos(-nl*sqrt( (h2-1.0)/(1.0-nl*nl) )) - sqrt(k2*(h2-1.0));
+            res = res/h2 + atan( sqrt(k2/(h2-1.0)));
+            res /= 3.141593;
+        #else
+            // APPROXIMATED : Quilez - https://iquilezles.org/articles/sphereao
+            res = (nl*h+1.0)/h2;
+            res = 0.33*res*res;
+        #endif
+    }
+
+    return res;
+}

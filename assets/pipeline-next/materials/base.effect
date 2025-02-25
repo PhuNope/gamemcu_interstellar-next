@@ -1,0 +1,123 @@
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: base-vs:vert
+      frag: blit-fs:frag
+      pass: blit
+      depthStencilState: 
+        depthTest: false
+        depthWrite: false
+    - vert: base-vs:vert
+      frag: tonemap-fs:frag
+      pass: tonemap
+      depthStencilState:
+        depthTest: false
+        depthWrite: false
+    - vert: base-vs:vert
+      frag: tonemap-rgb-fs:frag
+      pass: tonemap-rgb
+      depthStencilState:
+        depthTest: false
+        depthWrite: false
+}%
+
+CCProgram base-vs %{
+  precision mediump float;
+  #include <legacy/decode>
+  #include <builtin/uniforms/cc-global>
+
+  out vec2 v_uv;
+
+  vec4 vert() {
+    v_uv = a_texCoord;
+    
+    vec4 position;
+    CCDecode(position);
+
+    return position;
+  }
+}%
+
+CCProgram blit-fs %{
+  precision mediump float;
+
+  in vec2 v_uv;
+  #pragma rate mainTexture pass
+  uniform sampler2D mainTexture;
+
+  vec4 frag() {
+    return texture(mainTexture, v_uv);
+  }
+}%
+
+CCProgram tonemap-fs %{
+  precision mediump float;
+  #include <builtin/uniforms/cc-global>
+  // #include <common/color/aces>
+  // #include <common/color/gamma>
+
+  in vec2 v_uv;
+  #pragma rate mainTexture pass
+  uniform sampler2D mainTexture;
+
+  #define tonemapParams cc_debug_view_mode
+  #define u_intensity   tonemapParams.x
+
+  vec3 tonemapping(in vec3 x) {
+    x = x/(x+0.187) * 1.035;
+    return x;
+  }
+
+  vec4 frag() {
+    vec4 pixel = texture(mainTexture, v_uv);
+    pixel.rgb = tonemapping(pixel.rgb) * u_intensity;
+
+    // ACESToneMap(pixel.rgb);
+    // LinearToSRGB(pixel.rgb);
+
+    return pixel;
+  }
+}%
+
+CCProgram tonemap-rgb-fs %{
+  precision mediump float;
+  #include <builtin/uniforms/cc-global>
+
+  in vec2 v_uv;
+  #pragma rate mainTexture pass
+  uniform sampler2D mainTexture;
+
+  vec3 tonemapping(in vec3 x) {
+    x = x/(x+0.187) * 1.035;
+    return x;
+  }
+
+  #define tonemapParams     cc_debug_view_mode
+  #define u_intensity       tonemapParams.x
+  #define u_damage          tonemapParams.y
+
+  vec4 frag() {
+    vec2 uv = v_uv;
+    vec4 pixel = texture(mainTexture, uv);
+
+    vec3 color = vec3(0.0);
+    color.r = texture(mainTexture, vec2(uv.x + 0.0005, uv.y)).r;
+    color.g = texture(mainTexture, vec2(uv.x + 0.000, uv.y)).g;
+    color.b = texture(mainTexture, vec2(uv.x - 0.0005, uv.y)).b;
+
+    float damage = length(uv - 0.5);
+    color.r += damage * damage * u_damage * 2.;
+
+    color *= vec3(0.95,1.05,0.95);
+
+    float y = fract(uv.y * 150.);
+    color *= 0.9 + 1.03 * mix(-y*y,y*(y-2.)+1.,y);
+
+    //  color *= 0.9 + 0.1 * sin(10.0 * cc_time.x + uv.y * 1000.0);
+
+    color.rgb = tonemapping(color.rgb) * u_intensity;
+
+    return vec4(color, pixel.a);
+  }
+}%

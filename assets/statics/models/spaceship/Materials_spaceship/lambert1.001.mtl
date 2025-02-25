@@ -1,0 +1,63 @@
+{
+  "__type__": "cc.Material",
+  "_name": "lambert1.001",
+  "_objFlags": 0,
+  "__editorExtras__": {},
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "c8f66d17-351a-48da-a12c-0212d28575c4",
+    "__expectedType__": "cc.EffectAsset"
+  },
+  "_techIdx": 0,
+  "_defines": [
+    {
+      "USE_ALBEDO_MAP": true,
+      "USE_PBR_MAP": true,
+      "USE_NORMAL_MAP": true,
+      "USE_EMISSIVE_MAP": true
+    }
+  ],
+  "_states": [
+    {
+      "rasterizerState": {
+        "cullMode": 0
+      },
+      "blendState": {
+        "targets": [
+          {}
+        ]
+      },
+      "depthStencilState": {}
+    }
+  ],
+  "_props": [
+    {
+      "mainTexture": {
+        "__uuid__": "d7768ce5-76a4-45cf-b1a0-aeb287f9232a@0089c",
+        "__expectedType__": "cc.Texture2D"
+      },
+      "pbrMap": {
+        "__uuid__": "d7768ce5-76a4-45cf-b1a0-aeb287f9232a@9b633",
+        "__expectedType__": "cc.Texture2D"
+      },
+      "metallic": 1,
+      "roughness": 1,
+      "normalMap": {
+        "__uuid__": "d7768ce5-76a4-45cf-b1a0-aeb287f9232a@221a5",
+        "__expectedType__": "cc.Texture2D"
+      },
+      "occlusion": 0,
+      "emissiveMap": {
+        "__uuid__": "d7768ce5-76a4-45cf-b1a0-aeb287f9232a@3effa",
+        "__expectedType__": "cc.Texture2D"
+      },
+      "emissive": {
+        "__type__": "cc.Color",
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 255
+      }
+    }
+  ]
+}

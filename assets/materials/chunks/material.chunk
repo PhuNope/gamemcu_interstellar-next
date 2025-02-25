@@ -1,0 +1,146 @@
+#include <chunks/uniforms>
+#include <chunks/tonemap>
+
+struct MaterialInfo {
+  vec4  pixel;
+  vec3  albedo;
+  float alpha;
+  float roughness;
+  float metallic;
+  float ao;  
+  vec3  normal;
+  vec3  viewDir;
+  vec3  worldPos;
+  vec3  c_diffuse;
+  vec3  f0;
+  vec3  f90;
+  float specularWeight;
+  vec3  k_S;
+  vec3  k_D;
+  vec3  emissive;
+};
+
+  in vec2 v_uv;
+  in vec2 v_uv1;
+  in vec3 v_view;
+  in vec3 v_worldPos;
+  in vec3 v_normal;
+  in vec4 v_screenPos;
+  uniform sampler2D mainTexture;
+
+#if USE_PBR_MAP
+  in vec2 v_uvPBR;
+#endif
+
+#if USE_NORMAL_MAP
+  in vec2 v_uvN;
+  in vec3 v_tangent;
+  in vec3 v_bitangent;
+  uniform sampler2D normalMap;
+#endif
+
+#if USE_PBR_MAP
+  uniform sampler2D pbrMap;
+#endif
+
+#if USE_OCCLUSION_MAP
+  uniform sampler2D occlusionMap;
+  #pragma define-meta OCCLUSION_UV options([v_uv, v_uv1])
+#endif
+
+#if USE_OCCLUSION_MAP2
+  uniform sampler2D occlusionMap2;
+#endif
+
+#if USE_EMISSIVE_MAP
+  uniform sampler2D emissiveMap;
+#endif
+
+#if USE_PARTICLE
+  in float v_progress;
+#endif
+
+#define u_roughness   inputParams.x
+#define u_metallic    inputParams.y
+#define u_occlusion   inputParams.z
+#define u_normalScale inputParams.w
+#define u_emissive    albedoScaleAndCutoff.w
+#define u_indirectIntensity inputParams2.x
+
+#define DIELECTRIC_SPECULAR 0.04
+
+#pragma extension([GL_OES_standard_derivatives, __VERSION__ < 110])
+
+MaterialInfo getMaterialInfo() {
+  MaterialInfo materialInfo;
+  materialInfo.roughness = u_roughness;
+  materialInfo.metallic = u_metallic;
+  materialInfo.ao = 1.0;
+  materialInfo.emissive = emissiveColor.rgb * u_emissive;
+
+#if USE_SCREEN_POS
+  vec4 pixel = texture(mainTexture, v_screenPos.xy / v_screenPos.w);
+#else
+  vec4 pixel = texture(mainTexture, v_uv);
+#endif
+
+  materialInfo.albedo = mainColor.rgb * albedoScaleAndCutoff.xyz * linearColorSpace(pixel.rgb);
+  materialInfo.alpha  = mainColor.a * pixel.a;
+  materialInfo.pixel = pixel;
+  materialInfo.viewDir = normalize(v_view);
+  materialInfo.worldPos = v_worldPos;
+
+  vec3 ng = normalize(v_normal);
+
+#if USE_NORMAL_MAP
+  vec3 t = normalize(v_tangent);
+  vec3 b = normalize(v_bitangent);
+  vec3 n = texture(normalMap, v_uvN).rgb * 2.0 - 1.0;
+  n *= vec3(u_normalScale, u_normalScale, 1.0);
+  materialInfo.normal = normalize(mat3(t, b, ng) * normalize(n));
+#else 
+  materialInfo.normal = ng;
+#endif
+
+#if USE_PBR_MAP
+  vec4  MR = texture(pbrMap, v_uvPBR);
+  materialInfo.roughness *= MR.g;
+  materialInfo.metallic *= MR.b;
+#endif
+
+vec3 dxy = max(abs(dFdx(ng)), abs(dFdy(ng)));
+float geometryRoughness = max(max(dxy.x, dxy.y), dxy.z);
+materialInfo.roughness += geometryRoughness;  
+materialInfo.roughness = min(materialInfo.roughness, 1.0);
+
+#if USE_OCCLUSION_MAP    
+  float ao = texture(occlusionMap, OCCLUSION_UV).r;
+
+#if USE_OCCLUSION_MAP2
+  float ao2 = texture(occlusionMap2, OCCLUSION_UV).r;
+  ao = mix(ao2, ao, u_indirectIntensity);
+#endif
+
+  materialInfo.ao = mix(1., ao, u_occlusion);
+
+#endif
+
+#if USE_EMISSIVE_MAP
+  materialInfo.emissive *= linearColorSpace(texture(emissiveMap, v_uv).rgb);
+#endif
+
+#if USE_PARTICLE
+  float p = step(0.01, v_progress);
+  materialInfo.ao = mix(materialInfo.ao, 1., p);
+  // materialInfo.roughness = mix(materialInfo.roughness, materialInfo.roughness, p);
+#endif
+
+  materialInfo.c_diffuse = (1.0 - DIELECTRIC_SPECULAR) * (1.0 - materialInfo.metallic) * materialInfo.albedo;
+  materialInfo.f0 = mix(vec3(DIELECTRIC_SPECULAR), materialInfo.albedo, materialInfo.metallic);
+  materialInfo.f90 = vec3(1.0);
+  materialInfo.specularWeight = 1.0;
+  materialInfo.k_S = vec3(1.0);
+  materialInfo.k_D = vec3(1.0);
+
+  return materialInfo;
+}

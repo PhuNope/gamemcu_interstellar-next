@@ -1,0 +1,100 @@
+{
+  "ver": "2.3.13",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "aea56c5f-edce-4924-bd0d-a2fed5de5d9f",
+  "files": [],
+  "subMetas": {
+    "13640": {
+      "importer": "gltf-scene",
+      "uuid": "aea56c5f-edce-4924-bd0d-a2fed5de5d9f@13640",
+      "displayName": "",
+      "id": "13640",
+      "name": "battery.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "33532": {
+      "importer": "gltf-mesh",
+      "uuid": "aea56c5f-edce-4924-bd0d-a2fed5de5d9f@33532",
+      "displayName": "",
+      "id": "33532",
+      "name": "Cylinder.007.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 3224
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "10a81": {
+      "importer": "gltf-mesh",
+      "uuid": "aea56c5f-edce-4924-bd0d-a2fed5de5d9f@10a81",
+      "displayName": "",
+      "id": "10a81",
+      "name": "Cylinder.006.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 284
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "aea56c5f-edce-4924-bd0d-a2fed5de5d9f@10a81",
+        "aea56c5f-edce-4924-bd0d-a2fed5de5d9f@33532"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [
+        "293bf279-e91c-46fb-8cc4-28505a2cff2e",
+        "7639b800-920f-41ca-a2b9-02255aa71805",
+        "79cfcf3f-d0d4-40c7-a947-974de5412a94"
+      ],
+      "scenes": [
+        "aea56c5f-edce-4924-bd0d-a2fed5de5d9f@13640"
+      ]
+    },
+    "dumpMaterials": true,
+    "materialDumpDir": "db://assets/statics/models/decorate/Materials_battery"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "ver": "2.3.13",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "cb45627b-ef8b-45b8-abc3-a9f3c3febb62",
+  "files": [],
+  "subMetas": {
+    "eeafe": {
+      "importer": "gltf-mesh",
+      "uuid": "cb45627b-ef8b-45b8-abc3-a9f3c3febb62@eeafe",
+      "displayName": "",
+      "id": "eeafe",
+      "name": "building01_box.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 60
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7242f": {
+      "importer": "gltf-scene",
+      "uuid": "cb45627b-ef8b-45b8-abc3-a9f3c3febb62@7242f",
+      "displayName": "",
+      "id": "7242f",
+      "name": "building01_box.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "cb45627b-ef8b-45b8-abc3-a9f3c3febb62@eeafe"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [],
+      "scenes": [
+        "cb45627b-ef8b-45b8-abc3-a9f3c3febb62@7242f"
+      ]
+    },
+    "meshCompress": {
+      "enable": true,
+      "encode": true,
+      "compress": true
+    }
+  }
+}

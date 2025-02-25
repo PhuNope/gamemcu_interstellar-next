@@ -1,0 +1,95 @@
+#include <builtin/uniforms/cc-global>
+#include <chunks/material>
+#include <chunks/bsdf>
+#include <chunks/ibl>
+#include <chunks/fog>
+
+float pow2( const in float x ) { return x*x; }
+
+vec3 sweepLight(in float threshold, in float intensity, in float NoV) {
+    float f = pow2(1.0 - NoV);
+    float t = pow2(threshold)*1.2;
+    float p = smoothstep(t-0.2,t-0.1,f)*smoothstep(t,t-0.1,f);
+    return p*vec3(2.,10.,20.)*intensity*0.3;
+}
+
+#if USE_LIGHTMAP
+  uniform sampler2D lightmap;
+  #pragma define-meta LIGHTMAP_UV options([v_uv, v_uv1])
+#endif
+
+#if USE_INDIRECTMAP
+  uniform sampler2D indirectmap;
+  #pragma define-meta INDIRECTMAP_UV options([v_uv, v_uv1])
+#endif
+
+struct ShadingResult {
+  float ao;
+  float alpha;
+  vec3  f_diffuse;
+  vec3  f_specular;
+  vec3  f_emissive;
+  vec3  f_diffuseIndirect;
+  vec3  f_specularIndirect;
+};
+
+ShadingResult getStandardShading(MaterialInfo materialInfo) {
+  vec3 n = materialInfo.normal;
+  vec3 v = materialInfo.viewDir;
+  vec3 l = normalize(-cc_mainLitDir.xyz);
+  vec3 h = normalize(l + v);
+
+  float NoL = saturate(dot(n, l));
+  float NoV = saturate(dot(n, v));
+  float NoH = saturate(dot(n, h));
+  float VoH = saturate(dot(v, h));
+
+  ShadingResult result;
+
+  // vec3 irradiance = cc_mainLitColor.rgb * cc_mainLitColor.a;
+  // irradiance *= NoL;
+
+  // vec3 F = F_Schlick(materialInfo.f0, materialInfo.f90, VoH);
+  // result.f_diffuse  += irradiance * BRDF_Diffuse_Lambertian(materialInfo.c_diffuse) * (1.0 - F);
+  // result.f_specular += irradiance * BRDF_Specular_GGX(materialInfo.roughness, NoL, NoV, NoH) * F;
+
+  vec3 r = normalize(reflect(-v, n));
+  RadianceCoeff coeff = getRadianceCoeff(materialInfo, NoV);
+
+#if USE_LIGHTMAP
+  vec4 lm = texture(lightmap, LIGHTMAP_UV);
+  result.f_diffuseIndirect += RGBM2Linear(lm) * materialInfo.c_diffuse * mix(0.5, 1.0, smoothstep(-0.5, 0.0, n.y));
+  result.f_specularIndirect += coeff.k_S * getIBLSpecularRadiance(r, materialInfo.roughness, materialInfo.worldPos);
+#else
+  result.f_diffuseIndirect  += coeff.k_D * getIBLDiffuseRadiance(n, materialInfo.worldPos);
+  result.f_specularIndirect += coeff.k_S * getIBLSpecularRadiance(r, materialInfo.roughness, materialInfo.worldPos);
+#endif
+
+#if USE_INDIRECTMAP
+  vec4 im = texture(indirectmap, INDIRECTMAP_UV);
+  result.f_diffuseIndirect += (im.rgb) * materialInfo.c_diffuse * u_indirectIntensity;
+#endif
+
+  result.f_emissive += materialInfo.emissive;
+
+#if USE_SWEEP_LIGHT
+  result.f_emissive += sweepLight(inputParams2.y, inputParams2.z, NoV);
+#endif
+
+#if USE_PARTICLE
+#if USE_PARTICLE2
+  result.f_specularIndirect = mix(result.f_specularIndirect, result.f_specularIndirect * vec3(4.,8.,8.), smoothstep(0.,0.1,v_progress));
+#else
+  result.f_specularIndirect = mix(result.f_specularIndirect, result.f_specularIndirect * 8., smoothstep(0.,0.1,v_progress));
+#endif
+#endif
+
+  return result;
+}
+
+vec4 getStandardOutput(MaterialInfo materialInfo) {
+  ShadingResult result = getStandardShading(materialInfo);
+  vec3 finalColor = result.f_emissive + result.f_diffuse + result.f_specular + (result.f_diffuseIndirect + result.f_specularIndirect) * materialInfo.ao;
+  finalColor = applyFog(finalColor, v_view, v_worldPos) * cc_debug_view_mode.x;
+  return vec4(finalColor, result.alpha);
+}

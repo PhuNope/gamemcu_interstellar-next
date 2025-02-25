@@ -1,0 +1,75 @@
+{
+  "ver": "2.3.13",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "3b5d8d61-6acf-44e0-89b1-ae856a8b80c8",
+  "files": [],
+  "subMetas": {
+    "181b3": {
+      "importer": "gltf-mesh",
+      "uuid": "3b5d8d61-6acf-44e0-89b1-ae856a8b80c8@181b3",
+      "displayName": "",
+      "id": "181b3",
+      "name": "Cube.020.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 192
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "727ca": {
+      "importer": "gltf-scene",
+      "uuid": "3b5d8d61-6acf-44e0-89b1-ae856a8b80c8@727ca",
+      "displayName": "",
+      "id": "727ca",
+      "name": "spaceship_simple_4.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "3b5d8d61-6acf-44e0-89b1-ae856a8b80c8@181b3"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [],
+      "scenes": [
+        "3b5d8d61-6acf-44e0-89b1-ae856a8b80c8@727ca"
+      ]
+    }
+  }
+}

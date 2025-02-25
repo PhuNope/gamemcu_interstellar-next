@@ -1,0 +1,278 @@
+{
+  "ver": "2.3.13",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649",
+  "files": [],
+  "subMetas": {
+    "b7142": {
+      "importer": "gltf-mesh",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@b7142",
+      "displayName": "",
+      "id": "b7142",
+      "name": "Mesh.002.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 2126
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f7bc5": {
+      "importer": "gltf-embeded-image",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@f7bc5",
+      "displayName": "",
+      "id": "f7bc5",
+      "name": "CAR_LOW1_Bake1_PBR StoA_Emission.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": false,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".jpg",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "aa927": {
+      "importer": "gltf-embeded-image",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@aa927",
+      "displayName": "",
+      "id": "aa927",
+      "name": "CAR_LOW1_Bake1_PBR StoA_Normal.image",
+      "userData": {
+        "gltfIndex": 1,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": false,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".jpg",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4e7be": {
+      "importer": "gltf-embeded-image",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@4e7be",
+      "displayName": "",
+      "id": "4e7be",
+      "name": "CAR_LOW1_Bake1_PBR_Ambient Occlusion-CAR_LOW1_Bake1_PBR StoA_Roughness-CAR_LOW1_Bake1_PBR StoA_Metalness.image",
+      "userData": {
+        "gltfIndex": 2,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": false,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".jpg",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d440d": {
+      "importer": "gltf-embeded-image",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@d440d",
+      "displayName": "",
+      "id": "d440d",
+      "name": "CAR_LOW1_Bake1_PBR StoA_Diffuse.image",
+      "userData": {
+        "gltfIndex": 3,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": false,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".jpg",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "3effa": {
+      "importer": "texture",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@3effa",
+      "displayName": "",
+      "id": "3effa",
+      "name": "UnnamedTexture-0.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@f7bc5"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "221a5": {
+      "importer": "texture",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@221a5",
+      "displayName": "",
+      "id": "221a5",
+      "name": "UnnamedTexture-1.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@aa927"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0089c": {
+      "importer": "texture",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@0089c",
+      "displayName": "",
+      "id": "0089c",
+      "name": "UnnamedTexture-2.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@4e7be"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9b633": {
+      "importer": "texture",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@9b633",
+      "displayName": "",
+      "id": "9b633",
+      "name": "UnnamedTexture-3.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@d440d"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "900af": {
+      "importer": "gltf-scene",
+      "uuid": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@900af",
+      "displayName": "",
+      "id": "900af",
+      "name": "cybercar01.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "CAR_LOW1_Bake1_PBR StoA_Emission",
+        "uri": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@f7bc5"
+      },
+      {
+        "name": "CAR_LOW1_Bake1_PBR StoA_Normal",
+        "uri": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@aa927"
+      },
+      {
+        "name": "CAR_LOW1_Bake1_PBR_Ambient Occlusion-CAR_LOW1_Bake1_PBR StoA_Roughness-CAR_LOW1_Bake1_PBR StoA_Metalness",
+        "uri": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@4e7be"
+      },
+      {
+        "name": "CAR_LOW1_Bake1_PBR StoA_Diffuse",
+        "uri": "c7b4b9bd-6b20-4ab1-addd-e3263d732649@d440d"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "c7b4b9bd-6b20-4ab1-addd-e3263d732649@b7142"
+      ],
+      "skeletons": [],
+      "textures": [
+        "c7b4b9bd-6b20-4ab1-addd-e3263d732649@3effa",
+        "c7b4b9bd-6b20-4ab1-addd-e3263d732649@221a5",
+        "c7b4b9bd-6b20-4ab1-addd-e3263d732649@0089c",
+        "c7b4b9bd-6b20-4ab1-addd-e3263d732649@9b633"
+      ],
+      "materials": [
+        "25189df1-a170-46bc-a9f2-605f16db7419"
+      ],
+      "scenes": [
+        "c7b4b9bd-6b20-4ab1-addd-e3263d732649@900af"
+      ]
+    },
+    "dumpMaterials": true,
+    "materialDumpDir": "db://assets/statics/models/enemy/Materials_cybercar01",
+    "meshCompress": {
+      "enable": true,
+      "encode": true,
+      "compress": true
+    }
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "ver": "2.3.13",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470",
+  "files": [],
+  "subMetas": {
+    "67662": {
+      "importer": "gltf-mesh",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@67662",
+      "displayName": "",
+      "id": "67662",
+      "name": "Mesh.049.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 9270
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "82992": {
+      "importer": "gltf-embeded-image",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@82992",
+      "displayName": "",
+      "id": "82992",
+      "name": "cloth_Bake1_PBR_Normal.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": false,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".jpg",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b60d1": {
+      "importer": "gltf-mesh",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@b60d1",
+      "displayName": "",
+      "id": "b60d1",
+      "name": "Mesh.050.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 2555
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "8d407": {
+      "importer": "gltf-skeleton",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@8d407",
+      "displayName": "",
+      "id": "8d407",
+      "name": "hand.003.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 22
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "ccb23": {
+      "importer": "gltf-embeded-image",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@ccb23",
+      "displayName": "",
+      "id": "ccb23",
+      "name": "cloth_Bake1_PBR_Diffuse.image",
+      "userData": {
+        "gltfIndex": 1,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": false,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".jpg",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f943c": {
+      "importer": "gltf-embeded-image",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@f943c",
+      "displayName": "",
+      "id": "f943c",
+      "name": "hand_Bake1_PBR_Roughness.image",
+      "userData": {
+        "gltfIndex": 2,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": false,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".jpg",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "3effa": {
+      "importer": "texture",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@3effa",
+      "displayName": "",
+      "id": "3effa",
+      "name": "UnnamedTexture-0.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "37bf4444-6556-40aa-b9c4-9709a70aa470@82992"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "221a5": {
+      "importer": "texture",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@221a5",
+      "displayName": "",
+      "id": "221a5",
+      "name": "UnnamedTexture-1.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "37bf4444-6556-40aa-b9c4-9709a70aa470@ccb23"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0089c": {
+      "importer": "texture",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@0089c",
+      "displayName": "",
+      "id": "0089c",
+      "name": "UnnamedTexture-2.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "37bf4444-6556-40aa-b9c4-9709a70aa470@f943c"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6e7c1": {
+      "importer": "gltf-scene",
+      "uuid": "37bf4444-6556-40aa-b9c4-9709a70aa470@6e7c1",
+      "displayName": "",
+      "id": "6e7c1",
+      "name": "hand.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "cloth_Bake1_PBR_Normal",
+        "uri": "37bf4444-6556-40aa-b9c4-9709a70aa470@82992"
+      },
+      {
+        "name": "cloth_Bake1_PBR_Diffuse",
+        "uri": "37bf4444-6556-40aa-b9c4-9709a70aa470@ccb23"
+      },
+      {
+        "name": "hand_Bake1_PBR_Roughness",
+        "uri": "37bf4444-6556-40aa-b9c4-9709a70aa470@f943c"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "37bf4444-6556-40aa-b9c4-9709a70aa470@67662",
+        "37bf4444-6556-40aa-b9c4-9709a70aa470@b60d1"
+      ],
+      "skeletons": [
+        "37bf4444-6556-40aa-b9c4-9709a70aa470@8d407"
+      ],
+      "textures": [
+        "37bf4444-6556-40aa-b9c4-9709a70aa470@3effa",
+        "37bf4444-6556-40aa-b9c4-9709a70aa470@221a5",
+        "37bf4444-6556-40aa-b9c4-9709a70aa470@0089c"
+      ],
+      "materials": [
+        "7e128212-ca72-46d1-91cc-0d5a1b940a85"
+      ],
+      "scenes": [
+        "37bf4444-6556-40aa-b9c4-9709a70aa470@6e7c1"
+      ]
+    },
+    "dumpMaterials": true,
+    "materialDumpDir": "db://assets/statics/models/hand/Materials_hand",
+    "meshCompress": {
+      "enable": true,
+      "encode": true,
+      "compress": true
+    }
+  }
+}

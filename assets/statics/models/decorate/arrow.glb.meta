@@ -1,0 +1,129 @@
+{
+  "ver": "2.3.13",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "5486c5b9-9ac5-46ee-add7-7f9ac26cc928",
+  "files": [],
+  "subMetas": {
+    "313e0": {
+      "importer": "gltf-mesh",
+      "uuid": "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@313e0",
+      "displayName": "",
+      "id": "313e0",
+      "name": "Plane.002.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 16
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "87c08": {
+      "importer": "gltf-embeded-image",
+      "uuid": "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@87c08",
+      "displayName": "",
+      "id": "87c08",
+      "name": "gradiant_02.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": false,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".jpg",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@87c08"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0d683": {
+      "importer": "gltf-scene",
+      "uuid": "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@0d683",
+      "displayName": "",
+      "id": "0d683",
+      "name": "arrow.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "gradiant_02",
+        "uri": "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@87c08"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@313e0"
+      ],
+      "skeletons": [],
+      "textures": [
+        "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@e39f7"
+      ],
+      "materials": [
+        "330a73fb-50c2-43a7-b712-679d8e241e5e"
+      ],
+      "scenes": [
+        "5486c5b9-9ac5-46ee-add7-7f9ac26cc928@0d683"
+      ]
+    },
+    "dumpMaterials": true,
+    "materialDumpDir": "db://assets/statics/models/decorate/Materials_arrow"
+  }
+}

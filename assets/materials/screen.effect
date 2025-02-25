@@ -1,0 +1,137 @@
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: screen-vs:vert
+      frag: screen-fs:frag
+      properties: &props
+        mainTexture:        { value: black }
+        mainTexture_ST:     { value: [1, 1, 0, 0] }
+        mainColor:          { value: [1, 1, 1, 1], editor: { type: color } }
+        portalWeight:       { value: 0, target: sampleValues.x }
+        specularIntensity:  { value: 1, target: sampleValues.y }
+
+  - name: transparent
+    passes:
+    - vert: screen-vs:vert
+      frag: screen-fs:frag
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *props
+}%
+
+CCProgram screen-vs %{
+  precision highp float;
+  #include <builtin/uniforms/cc-global>
+  #include <legacy/input-standard>
+  #include <legacy/decode-base>
+  #include <legacy/local-batch>
+
+  out vec2 v_uv;
+  out vec3 v_view;
+  out vec3 v_normal;
+  out vec3 v_worldPos;
+  out vec4 v_screenPos;
+
+  uniform Constants {
+    vec4 mainColor;
+    vec4 mainTexture_ST;
+    vec4 sampleValues;
+  };
+
+  vec4 vert() {    
+    StandardVertInput In;
+
+    CCVertInput(In);
+
+    mat4 matWorld, matWorldIT;
+    CCGetWorldMatrixFull(matWorld, matWorldIT);
+
+    vec4 worldPos = matWorld * In.position;
+
+    v_worldPos = worldPos.xyz;
+    v_view = cc_cameraPos.xyz - worldPos.xyz;
+    v_normal = normalize((matWorldIT * vec4(In.normal, 0.0)).xyz);
+  
+    v_uv = a_texCoord;
+    CC_HANDLE_RT_SAMPLE_FLIP(v_uv);
+    v_uv = v_uv * mainTexture_ST.xy + mainTexture_ST.zw;
+
+    vec4 clip = cc_matViewProj * worldPos;
+  
+    v_screenPos = (clip + clip.w) * 0.5;
+
+    return clip;
+  }
+}%       
+
+CCProgram screen-fs %{
+  precision highp float;
+  #include <builtin/uniforms/cc-global>
+  #include <chunks/ibl>
+  #include <chunks/tonemap>
+
+  in vec2 v_uv;
+  in vec3 v_view;
+  in vec3 v_normal;
+  in vec3 v_worldPos;
+  in vec4 v_screenPos;
+  uniform sampler2D mainTexture;
+
+  uniform Constants {
+    vec4 mainColor;
+    vec4 mainTexture_ST;
+    vec4 sampleValues;
+  };
+
+  #define portalWeight      sampleValues.x
+  #define specularIntensity sampleValues.y
+
+  float luminance(vec3 color) {
+    return dot(color, vec3( 0.2126729, 0.7151522, 0.0721750 ));
+  }
+
+  vec4 frag() {
+    vec3 f_diffuse = vec3(0.0);
+    vec3 f_specular = vec3(0.0);
+    vec3 f_clearcoat = vec3(0.0);
+
+    vec3 v = normalize(v_view);
+    vec3 n = normalize(v_normal);
+    vec3 r = normalize(reflect(-v, n));
+    
+    float NoV = dot(n, v);
+
+    vec2 uv = mix(v_uv, v_screenPos.xy / v_screenPos.w, clamp(portalWeight, 0.0, 1.0));
+    vec4 pixel = texture(mainTexture, uv);
+
+    f_specular += getIBLSpecularRadiance(r, 0.3, v_worldPos) * (1.0 - NoV);
+    f_clearcoat += getIBLSpecularRadiance(r, 0.0, v_worldPos) * (1.0 - NoV) * 0.5;
+    f_clearcoat *= luminance(f_clearcoat);
+
+    vec3 color = vec3(0.0);
+    color.r = texture(mainTexture, vec2(uv.x + 0.0005, uv.y)).r;
+    color.g = texture(mainTexture, vec2(uv.x + 0.000, uv.y)).g;
+    color.b = texture(mainTexture, vec2(uv.x - 0.0005, uv.y)).b;
+
+    color *= vec3(0.95,1.05,0.95);
+    // color *= 0.9 + 0.1 * sin(10.0 * cc_time.x + uv.y * 500.0);
+
+    float y = fract(uv.y*85.+2.*cc_time.x);
+    color *= 0.9 + 1.03 * mix(-y*y,y*(y-2.)+1.,y);
+
+    f_diffuse += color;
+
+    vec3 finalColor = f_diffuse + (f_specular + f_clearcoat) * specularIntensity;
+    finalColor *= 0.3 + 0.7 * 16.0 * v_uv.x * v_uv.y * (1.0 - v_uv.x) * (1.0 - v_uv.y);
+
+    finalColor.rgb = sRGB2Linear(finalColor.rgb);
+
+    return vec4(finalColor, pixel.a);
+  }
+}%

@@ -1,0 +1,90 @@
+#include <builtin/uniforms/cc-local>
+#include <builtin/uniforms/cc-environment>
+#include <common/texture/texture-lod>
+#include <common/data/unpack>
+
+#if CC_USE_REFLECTION_PROBE
+  #pragma builtin(local)
+  layout(set = 2, binding = 15) uniform samplerCube cc_reflectionProbeCubemap;
+#endif
+
+
+vec2 EnvBRDFApproxLazarov(float Roughness, float NoV) {
+  // [ Lazarov 2013, "Getting More Physical in Call of Duty: Black Ops II" ]
+  // Adaptation to fit our G term.
+  const mediump vec4 c0 = vec4(-1.0, -0.0275, -0.572, 0.022);
+  const mediump vec4 c1 = vec4(1.0, 0.0425, 1.04, -0.04);
+  vec4 r = Roughness * c0 + c1;
+  mediump float a004 = min(r.x * r.x, exp2(-9.28 * NoV)) * r.x + r.y;
+  mediump vec2 AB = vec2(-1.04, 1.04) * a004 + r.zw;
+  return AB;
+}
+
+struct RadianceCoeff {
+  vec3 k_S;
+  vec3 k_D;
+};
+
+RadianceCoeff getRadianceCoeff(MaterialInfo materialInfo, float NoV) {
+  vec2 f_ab = EnvBRDFApproxLazarov(materialInfo.roughness, NoV);
+
+  // see https://bruop.github.io/ibl/#single_scattering_results at Single Scattering Results
+  // Roughness dependent fresnel, from Fdez-Aguera
+  vec3 F0 = materialInfo.f0;
+  vec3 k_S = F_SchlickRoughness(F0, materialInfo.roughness, NoV);
+  vec3 FssEss = materialInfo.specularWeight * k_S * f_ab.x + f_ab.y; 
+
+  // Multiple scattering, from Fdez-Aguera
+  float Ems = (1.0 - (f_ab.x + f_ab.y));
+  vec3 F_avg = materialInfo.specularWeight * (F0 + (1.0 - F0) / 21.0);
+  vec3 FmsEms = Ems * FssEss * F_avg / (1.0 - F_avg * Ems);
+  vec3 k_D = materialInfo.c_diffuse * (1.0 - FssEss + FmsEms);
+
+  RadianceCoeff coeff;
+  coeff.k_S = FssEss;
+  coeff.k_D = FmsEms + k_D;
+  return coeff;
+}
+
+vec3 boxProjection(vec3 dir, vec3 worldPos, vec3 probePos, vec3 boxMin, vec3 boxMax) {
+    vec3 tbot = boxMin - worldPos;
+    vec3 ttop = boxMax - worldPos;
+    vec3 tmax = mix(tbot, ttop, step(vec3(0), dir));
+    tmax /= dir;
+    float t = min(min(tmax.x, tmax.y), tmax.z);
+    return worldPos + dir * t - probePos;
+}
+
+#define MAX_MIP_LEVEL cc_ambientGround.w
+
+vec3 getIBLDiffuseRadiance(vec3 n, vec3 worldPos) {
+#if CC_USE_REFLECTION_PROBE
+  vec4 env = fragTextureLod(cc_reflectionProbeCubemap, n, MAX_MIP_LEVEL - 1.0);
+#else
+  vec4 env = fragTextureLod(cc_environment, n, MAX_MIP_LEVEL - 1.0);
+#endif
+#if CC_USE_IBL == IBL_RGBE
+  return unpackRGBE(env);
+#else
+  return env.rgb;
+#endif
+} 
+
+vec3 getIBLSpecularRadiance(vec3 dir, float roughness, vec3 worldPos) {
+  float mip = roughness * (MAX_MIP_LEVEL - 1.0);
+
+#if CC_USE_REFLECTION_PROBE
+  vec3 centerPos = cc_reflectionProbeData1.xyz;
+  vec3 boxHalfSize = cc_reflectionProbeData2.xyz;
+  dir = boxProjection(dir, worldPos, centerPos, centerPos - boxHalfSize, centerPos + boxHalfSize);
+  vec4 env = fragTextureLod(cc_reflectionProbeCubemap, dir, mip);
+#else
+  vec4 env = fragTextureLod(cc_environment, dir, mip); 
+#endif
+
+#if CC_USE_IBL == IBL_RGBE
+  return unpackRGBE(env);
+#else
+  return env.rgb;
+#endif  
+}

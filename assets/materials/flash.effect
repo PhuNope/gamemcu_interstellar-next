@@ -1,0 +1,54 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: legacy/main-functions/general-vs:vert # builtin header
+      frag: unlit-fs:frag
+      properties: &props
+        mainColor:      { value: [1, 1, 1, 1], editor: { type: color } }
+        colorIntensity: { value: 1, target: params.x }
+  - name: transparent
+    passes:
+    - vert: general-vs:vert # builtin header
+      frag: unlit-fs:frag
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *props
+}%
+
+CCProgram unlit-fs %{
+  precision highp float;
+  #include <legacy/output>
+  #include <chunks/fog>
+
+  in vec2 v_uv;
+  in vec3 v_position;
+  in vec3 v_normal;
+
+  uniform Constant {
+    vec4 mainColor;
+    vec4 params;
+  };
+
+  vec4 frag () {
+    vec4 col = mainColor * params.x;
+
+    vec3 view = cc_cameraPos.xyz - v_position;
+    vec3 V = normalize(-view);
+    vec3 N = normalize(v_normal);
+    float NdotV = max(dot(N, V), 0.0);
+
+    float fresnel = pow(1.0 - NdotV, 2.);
+    col.rgb *= fresnel;
+    col.rgb = applyFog(col.rgb, view, v_position);
+    
+    return col;
+  }
+}%

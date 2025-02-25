@@ -1,0 +1,41 @@
+vec3 sRGB2Linear(in vec3 x) {
+  return x * x;
+}
+
+vec3 linear2SRGB(in vec3 x) {
+  return sqrt(x);
+}
+
+vec3 linearColorSpace(in vec3 x) {
+#if USE_LINEAR_COLOR
+  return x;
+#else
+  return sRGB2Linear(x);
+#endif
+}
+
+#define RGBM_STD 0
+// #define RGBM_MAXRANGE 8.
+// #define RGBM_MAXRANGE_SQRT 2.82842712 //sqrt(8.)
+
+#define RGBM_MAXRANGE 8.0
+#define RGBM_MAXRANGE_SQRT 4.0 //sqrt(16.0)
+
+// http://iwasbeingirony.blogspot.ca/2010/06/difference-between-rgbm-and-rgbd.html
+vec3 RGBM2Linear(vec4 rgbm) {
+  vec3 v = (rgbm.rgb * ((1. - rgbm.a) * RGBM_MAXRANGE_SQRT));
+  return v * v;
+}
+
+vec4 Linear2RGBM(vec3 rgb) {
+  rgb = sqrt(rgb);
+  float maxRGB = max(rgb.x,max(rgb.g,rgb.b));
+  float M =      maxRGB / RGBM_MAXRANGE_SQRT;
+  M =            ceil(M * 255.0) / 255.0;
+  return vec4(rgb / (M * RGBM_MAXRANGE_SQRT), 1. - M);
+}
+
+vec3 tonemapping(in vec3 x) {
+  x = x/(x+0.187) * 1.035;
+  return x;
+}

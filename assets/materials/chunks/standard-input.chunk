@@ -1,0 +1,106 @@
+#include <builtin/uniforms/cc-global>
+#include <legacy/input-standard>
+#include <legacy/decode-base>
+#include <legacy/local-batch>
+#include <chunks/uniforms>
+
+  in vec2 a_texCoord1;
+
+  out vec2 v_uv;
+  out vec2 v_uv1;
+  out vec3 v_view;
+  out vec3 v_worldPos;
+  out vec3 v_normal;
+  out vec4 v_screenPos;
+  out vec3 v_emissive;
+
+#if USE_NORMAL_MAP
+  out vec2 v_uvN;
+  out vec3 v_tangent;
+  out vec3 v_bitangent;
+#endif
+
+#if USE_PBR_MAP
+  out vec2 v_uvPBR;
+#endif
+
+#if USE_PARTICLE
+  in vec3 a_centroid;
+  in vec3 a_controlPoint0;
+  in vec3 a_controlPoint1;
+  in vec3 a_endPosition;
+  out float v_progress;
+  uniform sampler2D  noiseMap;
+  #define u_progress inputParams2.w
+
+// p0: start position
+// c0: control point 1
+// c1: control point 2
+// p1: end position
+vec3 cubicBezier(vec3 p0, vec3 c0, vec3 c1, vec3 p1, float t) {
+    float tn = 1.0 - t;
+    return
+    tn * tn * tn * p0 +
+    3.0 * tn * tn * t * c0 +
+    3.0 * tn * t * t * c1 +
+    t * t * t * p1;
+}
+#endif
+
+float pow2( const in float x ) { return x*x; }
+
+vec4 getStandardInput() {
+  StandardVertInput In;
+
+  CCVertInput(In);
+
+  mat4 matWorld, matWorldIT;
+  CCGetWorldMatrixFull(matWorld, matWorldIT);
+
+  v_normal = normalize((matWorldIT * vec4(In.normal, 0.0)).xyz);
+  v_uv = a_texCoord * mainTexture_ST.xy + mainTexture_ST.zw;
+  v_uv1 = a_texCoord1;
+
+  vec4 position = In.position;
+
+#if USE_PARTICLE
+
+#if USE_PARTICLE2
+  float startTime = texture(noiseMap, v_uv * 1.26).r;
+  vec3  startPosition = mix(vec3(0.,0.,-.1), vec3(0.,0.,0.07), smoothstep(1., 1.5, u_progress));
+  float progress = mix(-0.7*pow2(u_progress-2.1)+3., -1.5*pow2(u_progress-1.)+1.5, step(.16, a_centroid.z));
+  progress = saturate(progress - startTime);
+  position.xyz = mix(startPosition, position.xyz, progress);
+#else
+  float startTime = texture(noiseMap, v_uv * 1.3).r;
+  vec3  startPosition = vec3(0.);
+  float progress = saturate(u_progress - startTime);
+#endif
+
+  position.xyz = (position.xyz - a_centroid) * mix(1., 0., progress) + a_centroid;
+  position.xyz += cubicBezier(startPosition, a_controlPoint0, a_controlPoint1, a_endPosition, progress);
+
+  v_progress = progress;
+#endif
+
+  vec4 worldPos = matWorld * position;
+
+  v_worldPos = worldPos.xyz;
+  v_view = cc_cameraPos.xyz - worldPos.xyz;
+
+#if USE_NORMAL_MAP
+  v_tangent = normalize((matWorld * vec4(In.tangent.xyz, 0.0)).xyz);
+  v_bitangent = cross(v_normal, v_tangent) * In.tangent.w;
+  v_uvN = a_texCoord * normalMap_ST.xy + normalMap_ST.zw;
+#endif
+
+#if USE_PBR_MAP
+  v_uvPBR = a_texCoord * pbrMap_ST.xy + pbrMap_ST.zw;
+#endif
+
+  vec4 ndc = cc_matViewProj * worldPos;
+  
+  v_screenPos = (ndc + ndc.w) * 0.5;
+
+  return ndc;
+}
